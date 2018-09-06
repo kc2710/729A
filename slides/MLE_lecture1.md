@@ -37,16 +37,22 @@ incremental: true
 
 Max/Min
 ========================================================
-```{r}
+
+```r
 x<-seq(0,6,by=.001)
 y<-20-12*x+2*x^2
 plot(x,y,xlim=range(0,6),ylim=range(0,6))
 ```
 
+![plot of chunk unnamed-chunk-1](MLE_lecture1-figure/unnamed-chunk-1-1.png)
+
 Max/Min
 ========================================================
-```{r}
+
+```r
 x<-seq(-2,8,by=.001)
 y<-20+12*x-2*x^2
 plot(x,y,xlim=range(-2,8),ylim=range(0,40))
 ```
+
+![plot of chunk unnamed-chunk-2](MLE_lecture1-figure/unnamed-chunk-2-1.png)
