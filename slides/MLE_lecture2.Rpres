@@ -249,9 +249,6 @@ m1
 OLS in MLE
 ========================================================
 
-\begin{frame}[fragile]
-Now let's try a little fake data simulation.
-\pause \begin{blockcode}
 
 ```{r}
 # set an unknown, but fixed, parameter mu
