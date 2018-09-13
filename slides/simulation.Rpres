@@ -1,0 +1,59 @@
+Simulation
+========================================================
+author:William Reed    
+date:September 13, 2018
+autosize: true
+
+Overview
+========================================================
+
+- Simulation can be a very useful tool
+- Helps you think about problems with your model
+- Provides an Avenue for exploring empirical issues
+
+Simulation
+========================================================
+
+- Generate some data 
+- Create a model from these data
+- Fit econometric models to these data
+
+Examples
+========================================================
+
+```{r}
+set.seed(1234)
+x<-rnorm(1:100, mean = 2, sd = 4)
+hist(x)
+```
+
+Examples
+========================================================
+
+```{r}
+y<-1+2*x+rnorm(1:100, mean = 0, sd = 1)
+lm(y~x)
+```
+
+
+Examples
+========================================================
+```{r}
+n.sims <- 1000  # set number of simulations
+beta1 <- numeric(n.sims)  # create holder for simulations
+for (i in 1:n.sims) {
+  y<-1+2*x+rnorm(1:100, mean = 0, sd = 1)
+  out<-lm(y~x)
+  beta1[i] <-summary(out)$coefficients[2,1] 
+}
+length(beta1)
+
+```
+
+
+Examples
+========================================================
+```{r}
+hist(beta1)
+```
+

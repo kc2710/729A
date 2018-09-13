@@ -1,0 +1,361 @@
+Maximum Likelihood Estimation
+========================================================
+author: William Reed
+date: September 13, 2018
+autosize: true
+
+
+MLE
+========================================================
+A maximum likelihood estimator selects the parameter vector $\theta$ that maximizes the probability of the observed data $y$ across the parameter space $\Theta$.
+
+- Under which $\theta$ would these data most likely occur?
+- Assumes that the model $Y \sim f(y | \theta)$ is correct.
+- Optimal asymptotic properties.
+- Usually reasonable in small samples.
+- Intuitive appeal and usually easy to implement.
+
+Find the MLE
+========================================================
+
+- Calculate the probability of the data given the parameters. 
+- This is the ``likelihood function,'' which we might write this as $p(y | \theta)$ or $\mathcal{L}(\theta | y)$. 
+- Take the log and remove as many powers and products as possible. 
+` This gives us the "log-likelihood function," written as $\log\mathcal{L}(\theta | y)$. 
+- In addition to logging, we can apply any monotonic increasing function we like to $\mathcal{L}$ (i.e., drop constants). 
+- We apply these transformations because it make the maximization easier but preserves the maximum. 
+
+Binomial Model
+========================================================
+- Start with the probability model $Y \sim f(y | \theta)$, which in the case of the binomial model is $Y \sim \text{binomial}(y | n, \pi)$.
+- What is the support of the binomial distribution? 
+- $y \in \{0, 1, 2, ..., n\}$.
+- Is $y$ a discrete random variable or a continuous random variable? 
+- What is the pdf? 
+- $f(y | n, \pi) = \displaystyle{n \choose y}\pi^y(1 - \pi)^{n - y}$.
+
+Data on Clinton & Trump
+========================================================
+
+```{r}
+Clinton <- c(18,31,34,33,27,33,28,23,33,12,19,25,14,4,22,7)
+Trump <- c(11,22,27,29,24,29,25,26,38,14,23,31,20,6,34,12)
+Y <- Clinton
+N <- Clinton + Trump
+```
+
+Vote Share by State
+========================================================
+
+Calculate Vote Share by State
+```{r, echo=TRUE}
+Clinton / N
+```
+
+Aggregate Vote Share
+========================================================
+
+```{r}
+sum(Y) / sum(N)
+```
+
+
+
+========================================================
+Step 1: Write down the likelihood function.
+$$
+\mathcal{L}(\pi | y, n) = p(y | n, \pi) = \displaystyle{n \choose y}\pi^y(1 - \pi)^{n - y}
+$$
+- In this case, it's just the pdf.
+
+========================================================
+Step 2: Take the log and reduce.
+
+$$
+\mathcal{L}(\pi | y, n) = \displaystyle{n \choose y}\pi^y(1 - \pi)^{n - y}
+$$
+$$\log \mathcal{L}(\pi | y, n) = \log\left[ \displaystyle{n \choose y}\pi^y(1 - \pi)^{n - y} \right]
+$$
+
+$$
+ \log\mathcal{L}(\pi | y, n) \propto y \log\pi+ (n - y) \log(1 - \pi)
+$$
+
+
+========================================================
+Step 3: Maximize.
+
+- Start with the log-likelihood and take the derivative with respect to the parameter.
+$$\log\mathcal{L}(\pi | y, n) \propto y \log\pi+ (n - y) \log(1 - \pi)
+$$
+- Take the partial derivative
+
+$$\dfrac{\partial \mathcal{L}(\pi | y, n)}{\partial \pi} \propto \dfrac{y}{\pi} - \dfrac{n - y}{1 - \pi}
+$$
+
+========================================================
+Now we'll set the derivative equal to zero to find the spot where the log-likelihood is flat. That will be our estimate $\hat{\pi}$.
+
+
+$$\dfrac{y}{\hat{\pi}} - \dfrac{n - y}{1 - \hat{\pi}} = 0$$
+
+- Do the algebra
+
+$$ \dfrac{y}{n} = \hat{\pi}$$
+
+
+
+========================================================
+
+Do it with MLE
+```{r}
+bernoulli.lik <- function(p) {
+  LL<-sum(Y*log(p)+(N-Y)*log(1-p))
+}
+```
+
+
+========================================================
+
+Plot LL:
+```{r}
+p.seq <- seq(0.01, 0.99, 0.01)
+plot(p.seq, sapply(p.seq, bernoulli.lik), type="l")
+```
+
+
+
+Maximum Likelihood Estimation
+========================================================
+- Write down a probability model.
+- Find the probability of the data given the parameters--the likelihood function.
+- Take the log and simplify.
+- Maximize.
+- Analytically. (Usually difficult or impossible.)
+- Numerically. (Usually easier.)
+
+OLS in MLE
+========================================================
+
+- Start with the probability model $Y_i \sim f(y_i | \theta)$, which in the case of the normal model is $Y_i \sim N(y_i | \mu, 1)$. 
+- We're assuming a known variance so that we have just one parameter to estimate.  
+- However, we're going to assume that we have multiple observations, so that $y = [y_1, y_2, ,..., y_n]$.
+
+OLS in MLE
+========================================================
+
+- Support of the normal distribution is the real number line.
+- Is $y$ a continuous variable and the pdf is: 
+
+$$f(y_i | \mu, \sigma) = \dfrac{1}{\sigma \sqrt{2\pi}}e^{-\dfrac{(y_i - \mu)^2}{2\sigma^2}}$$.
+
+
+OLS in MLE
+========================================================
+- Step 1: Write down the likelihood function. 
+- Recall that we can obtain the probability of $y_1$ and $y_2$ and ... and $y_n$ by multiplying the probabilities of each (assuming independence).
+$$
+\mathcal{L}(\mu | y ) = \displaystyle\prod_{i = 1}^n \overbrace{p(y_i | \mu)}^{density} = \displaystyle\prod_{i = 1}^n \dfrac{1}{\sqrt{2\pi}}e^{-\dfrac{(y_i - \mu)^2}{2}}
+$$
+- When you have multiple observations we get a product.
+
+
+OLS in MLE
+========================================================
+- Step 2: Take the log and reduce.
+\begin{scriptsize}
+
+$$\mathcal{L}(\mu | y) = \displaystyle\prod_{i = 1}^n \dfrac{1}{\sqrt{2\pi}}e^{-\dfrac{(y_i - \mu)^2}{2}}
+
+$$
+$$\log \mathcal{L}(\mu | y) \propto \displaystyle -\sum_{i = 1}^n (y_i - \mu)^2$$
+
+
+OLS in MLE
+========================================================
+
+First, let's do a little rewriting.
+
+$$\log \mathcal{L}(\mu | y) = \displaystyle -\sum_{i = 1}^n (y_i - \mu)^2 $$
+
+$$= \displaystyle -\sum_{i = 1}^n (y_i^2 - 2y_i\mu + \mu^2)$$
+
+
+$$\log \mathcal{L}(\mu | y) \propto 2  \mu \displaystyle \sum_{i = 1}^n y_i - n\mu^2$$
+
+
+
+OLS in MLE
+========================================================
+
+
+- Now, let's find the derivative
+
+$$\log \mathcal{L}(\mu | y) \propto 2  \mu \displaystyle \sum_{i = 1}^n y_i - n\mu^2$$
+
+$$\dfrac{\partial \log \mathcal{L}(\mu | y)}{\partial \mu} \propto \dfrac{\partial}{\partial \mu} \left[2\mu \displaystyle \sum_{i = 1}^n y_i\right] - \dfrac{\partial}{\partial \mu}\left[n\mu^2\right]$$
+
+$$\dfrac{\partial \log \mathcal{L}(\mu | y)}{\partial \mu} \propto 2\displaystyle \sum_{i = 1}^n y_i - 2n\mu$$
+
+
+OLS in MLE
+========================================================
+
+-Now, let's set the derivative equal to zero and solve for $\hat{\mu}$.
+
+$$\log \mathcal{L}(\hat{\mu} | y) \propto 2\displaystyle \sum_{i = 1}^n y_i - 2n\hat{\mu} = 0$$ 
+$$2\displaystyle \sum_{i = 1}^n y_i = 2n\hat{\mu}$$
+$$\displaystyle \sum_{i = 1}^n y_i = n\hat{\mu}$$
+$$\displaystyle \dfrac{\sum_{i = 1}^n y_i}{n} = \hat{\mu}$$
+
+
+OLS in MLE
+========================================================
+Or we could write a little R function to do the optimization numerically.
+
+```{r}
+# log-likelihood for normal
+ll.fn.norm <- function(mu, y) {-sum((y - mu)^2)}
+```
+
+OLS in MLE
+========================================================
+```{r}
+# function to estimate normal model
+est.norm <- function(y) {
+  est <- optim(par = 0, fn = ll.fn.norm, y = y,
+               control = list(fnscale = -1),
+               method = "Brent",  # for 1d problems
+               lower = -100, upper = 100)
+  if (est$convergence != 0) print("Model did not converge!")
+  res <- list(est = est$par)
+  return(res)
+}
+```
+
+OLS in MLE
+========================================================
+
+```{r}
+# data
+y <- c(1.2, 3, 4.2)
+```
+```{r}
+# estimate mean
+m1 <- est.norm(y)
+m1
+```
+
+OLS in MLE
+========================================================
+
+\begin{frame}[fragile]
+Now let's try a little fake data simulation.
+\pause \begin{blockcode}
+
+```{r}
+# set an unknown, but fixed, parameter mu
+mu <- runif(1, -10, 10)
+# simulate the data
+y <- rnorm(1000, mu, 1)
+```
+```{r}
+# estimate mean
+m1 <- est.norm(y)
+```
+
+OLS in MLE
+========================================================
+```{r}
+m1
+lm(y~1)
+```
+
+
+Standard Errors
+========================================================
+```{r}
+# load packages
+library(compactr)
+
+ll <- function(mu, y) {
+  ll <- -sum((y - mu)^2)/2
+  return(ll)
+}
+
+y1 <- rnorm(100, 2)
+y1 <- y1 - mean(y1) + 2
+y2 <- rnorm(500, 2)
+y2 <- y2 - mean(y2) + 2
+```
+
+
+Standard Errors
+========================================================
+```{r}
+mu <- seq(-1, 4, length.out = 100)
+ll1 <- apply(as.matrix(mu), 1, ll, y1)
+ll2 <- apply(as.matrix(mu), 1, ll, y2)
+par(mfrow=c(2,2))
+plot(ll1,ylim=c(-500,-50))
+plot(ll2,ylim=c(-500,-50))
+```
+
+Standard Errors
+========================================================
+- Stylized (i.e., $\sigma = 1$) Normal Model Example
+$$ \dfrac{\partial \log \mathcal{L}(\mu | y)}{\partial \mu} = \sum_{i = 1}^n y_i - \mu n$$
+$$ \dfrac{\partial^2 \log \mathcal{L}(\mu | y)}{\partial^2 \mu} =  - n$$
+
+
+Standard Errors
+========================================================
+
+Facts
+
+- As $n$ increases, $\frac{\partial^2 \log \mathcal{L}(\mu | y)}{\partial^2 \mu}$ becomes more negative.
+- As $\frac{\partial^2 \log \mathcal{L}(\mu | y)}{\partial^2 \mu}$ gets more negative, the curvature increases.
+- As the curvature increases, the uncertainty decreases.
+
+Standard Errors
+========================================================
+
+- Use $\frac{\partial^2 \log \mathcal{L}(\mu | y)}{\partial^2 \mu}$ to estimate the standard errors
+
+- Single parameter case:
+$$
+var(\hat{\theta}) \approx \left[\left. - \frac{\partial^2 \log \mathcal{L}(\theta| y)}{\partial^2 \theta}\right| _{\theta = \hat{\theta}}\right] ^{-1}
+$$
+
+
+Standard Errors
+========================================================
+
+Continuing the stylized normal example:
+$$
+\dfrac{\partial^2 \log \mathcal{L}(\mu | y)}{\partial^2 \mu} =  - n
+~\Longrightarrow~
+\left[\left. - \frac{\partial^2 \log \mathcal{L}(\mu | y)}{\partial^2 \mu}\right| _{\mu = \hat{\mu}}\right] ^{-1} 
+ = \dfrac{1}{n} $$
+$$\approx var(\hat{\mu})$$
+
+$$
+sd(\hat{\mu})\approx \sqrt{\dfrac{1}{n}}\leftarrow\text{starndard error}
+$$
+
+Multiple Dimensions
+========================================================
+
+$$var(\hat{\theta})= cov(\hat{\theta}) \approx \left. \left[ 
+\displaystyle \begin{matrix}
+- \frac{\partial^2 \log \mathcal{L}(\theta| y)}{\partial^2 \theta_1} & - \frac{\partial^2 \log \mathcal{L}(\theta| y)}{\partial \theta_1 \partial \theta_2}\\
+- \frac{\partial^2 \log \mathcal{L}(\theta| y)}{\partial \theta_2 \partial \theta_1} & - \frac{\partial^2 \log \mathcal{L}(\theta| y)}{\partial^2 \theta_2}\\
+\end{matrix}\right]^{-1} \right|_{\theta = \hat{\theta}}
+$$
+
+- Rather than a single variance, we get a variance matrix (sometimes called the covariance matrix or the variance-covariance matrix).
+
+- Elements along the diagonal are the variances for each parameter, so the square root of the diagonal gives you the standard errors. 
+
+- The off-diagonal elements are the covariances
+
