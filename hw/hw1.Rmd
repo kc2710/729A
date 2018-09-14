@@ -1,0 +1,28 @@
+---
+title: "Homework 1"
+author: "GVPT 729A"
+date: "9/14/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+In this homework assignment you will compare estimates of a sample mean using MLE to Least Squares.  Below is a likeihood function for the OLS model with no covariates.  You can use this function calculate the MLE for the mean ($\mu$).
+
+```{r}
+my.ols <- function(mu, y) {-sum((y - mu)^2)}
+
+ols.mle <- function(y) {
+  est <- optim(par = 0, fn = my.ols, y = y,
+               control = list(fnscale = -1),
+               method = "Brent",  # for 1d problems
+               lower = -100, upper = 100)
+  res <- list(est = est$par)
+  return(res)
+}
+```
+
+You should write a Monte Carol simulation and compare your estimates of $\hat{\mu}$ and $se(\hat{\mu})$ for the MLE and the Least Squares calculation (for the Least Squares calculation you can use lm(y~)).  Your results will be sensitive to the sample size and number of replications you use in your Monte Carlo experiment.  Please comment on this.  
