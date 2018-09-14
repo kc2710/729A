@@ -25,4 +25,6 @@ ols.mle <- function(y) {
 }
 ```
 
-You should write a Monte Carol simulation and compare your estimates of $\hat{\mu}$ and $sd(\hat{\mu})$ for the MLE and the Least Squares calculation (for the Least Squares calculation you can use lm(y~)).  Your results will be sensitive to the sample size and number of replications you use in your Monte Carlo experiment.  Please comment on this.  
+You should write a Monte Carol simulation and compare your estimates of $\hat{\mu}$ and $sd(\hat{\mu})$ for the MLE and the Least Squares calculation (for the Least Squares calculation you can use lm(y~)). Produce two sets of simulations: the first set with two different sample sizes; the second set with two different number of replications. Your results will be sensitive to the sample size and number of replications you use in your Monte Carlo experiment. Please comment on this.
+
+You can turn in the assignment via email or hard copy. Don't forget to include your code and results. 
